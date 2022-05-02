@@ -39,7 +39,7 @@ async function run() {
 			const query = {}
 			const cursor = laptopCollection.find(query)
 			const loadData = await cursor.toArray()
-			// console.log(loadData)
+			console.log(loadData)
 			res.send(loadData)
 		})
 	} catch (error) {
