@@ -17,12 +17,6 @@ const client = new MongoClient(uri, {
 	useUnifiedTopology: true,
 	serverApi: ServerApiVersion.v1,
 })
-// client.connect((err) => {
-// 	const collection = client.db("test").collection("devices")
-// 	console.log("db connected")
-// 	// perform actions on the collection object
-// 	client.close()
-// })
 
 async function run() {
 	try {
@@ -32,11 +26,30 @@ async function run() {
 			name: "lanevo 12b",
 			description: "something is better then nothing",
 		}
-		const result = await laptopCollection.insertOne(laptop)
+		// const result = await laptopCollection.insertOne(laptop)
+
+		app.post("/product", async (req, res) => {
+			const products = req.body
+			console.log(products)
+			const NewProducts = await laptopCollection.insertOne(products)
+			res.send(products)
+		})
+		// get products
+		app.get("/product", async (req, res) => {
+			const query = {}
+			const cursor = laptopCollection.find(query)
+			const loadData = await cursor.toArray()
+			// console.log(loadData)
+			res.send(loadData)
+		})
 	} catch (error) {
 		res.send({ massage: error.massage })
 	}
 }
+
+app.get("/", (req, res) => {
+	res.send({ message: "success" })
+})
 run()
 app.listen(PORT, () => {
 	console.log("server is running port", PORT)
