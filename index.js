@@ -1,6 +1,6 @@
 import express from "express"
 import { MongoClient, ServerApiVersion } from "mongodb"
-
+import { ObjectId } from "mongodb"
 import cors from "cors"
 import "dotenv/config"
 // import res from "express/lib/response"
@@ -22,15 +22,10 @@ async function run() {
 	try {
 		await client.connect()
 		const laptopCollection = client.db("laptop_stock").collection("laptops")
-		const laptop = {
-			name: "lanevo 12b",
-			description: "something is better then nothing",
-		}
-		// const result = await laptopCollection.insertOne(laptop)
 
 		app.post("/product", async (req, res) => {
 			const products = req.body
-			console.log(products)
+			// console.log(products)
 			const NewProducts = await laptopCollection.insertOne(products)
 			res.send(products)
 		})
@@ -39,11 +34,20 @@ async function run() {
 			const query = {}
 			const cursor = laptopCollection.find(query)
 			const loadData = await cursor.toArray()
-			console.log(loadData)
+			// console.log(loadData)
 			res.send(loadData)
 		})
+		app.get("/product/:id", async (req, res) => {
+			const id = req.params.id
+			const query = { _id: ObjectId(id) }
+			const service = await laptopCollection.findOne(query)
+
+			console.log(service)
+
+			res.send(service)
+		})
 	} catch (error) {
-		res.send({ massage: error.massage })
+		console.log({ massage: error.massage })
 	}
 }
 
