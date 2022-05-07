@@ -42,12 +42,34 @@ async function run() {
 			const query = { _id: ObjectId(id) }
 			const service = await laptopCollection.findOne(query)
 
-			console.log(service)
-
 			res.send(service)
 		})
+		app.put("/update/:id", async (req, res) => {
+			const id = req.params.id
+			console.log(id)
+			console.log("hello")
+			const data = req.body
+			console.log(data)
+			const filter = { _id: ObjectId(id) }
+			const options = { upsert: true }
+
+			const updateDoc = {
+				$set: {
+					productName: data.productName,
+					productQuantity: data.productQuantity,
+				},
+			}
+
+			const updateProduct = await laptopCollection.updateOne(
+				filter,
+				updateDoc,
+				options,
+			)
+
+			res.send(updateProduct)
+		})
 	} catch (error) {
-		console.log({ massage: error.massage })
+		console.log({ massage: error })
 	}
 }
 
