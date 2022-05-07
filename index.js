@@ -44,12 +44,13 @@ async function run() {
 
 			res.send(service)
 		})
+
 		app.put("/update/:id", async (req, res) => {
 			const id = req.params.id
 			console.log(id)
-			console.log("hello")
+
 			const data = req.body
-			console.log(data)
+			console.log(data.productQuantity)
 			const filter = { _id: ObjectId(id) }
 			const options = { upsert: true }
 
@@ -68,6 +69,33 @@ async function run() {
 
 			res.send(updateProduct)
 		})
+		/* app.get("/updateStock/:id", async (req, res) => {
+			const id = req.params.id
+			const query = { _id: ObjectId(id) }
+			const product = await laptopCollection.findOne(query)
+
+			res.send(product)
+		}) */
+		/* app.put("/updateStock/:id", async (req, res) => {
+			const id = req.params.id
+			const quantity = req.body
+			const filter = { _id: ObjectId(id) }
+			const options = { upsert: true }
+
+			const updateDoc = {
+				$set: {
+					productQuantity: quantity,
+				},
+			}
+
+			const updateStock = await laptopCollection.updateOne(
+				filter,
+				updateDoc,
+				options,
+			)
+
+			res.send(updateStock)
+		}) */
 	} catch (error) {
 		console.log({ massage: error })
 	}
