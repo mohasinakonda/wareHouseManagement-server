@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 const PORT = process.env.PORT || 5000
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@laptopstock.xnbrc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@laptopstock.xnbrc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true`
 const client = new MongoClient(uri, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -47,10 +47,9 @@ async function run() {
 
 		app.put("/update/:id", async (req, res) => {
 			const id = req.params.id
-			console.log(id)
 
 			const data = req.body
-			console.log(data.productQuantity)
+
 			const filter = { _id: ObjectId(id) }
 			const options = { upsert: true }
 
@@ -58,6 +57,9 @@ async function run() {
 				$set: {
 					productName: data.productName,
 					productQuantity: data.productQuantity,
+					productImg: data.productImg,
+					productDescription: data.productDescription,
+					productSeller: data.productSeller,
 				},
 			}
 
@@ -69,33 +71,12 @@ async function run() {
 
 			res.send(updateProduct)
 		})
-		/* app.get("/updateStock/:id", async (req, res) => {
+		app.delete("/product/:id", async (req, res) => {
 			const id = req.params.id
 			const query = { _id: ObjectId(id) }
-			const product = await laptopCollection.findOne(query)
-
-			res.send(product)
-		}) */
-		/* app.put("/updateStock/:id", async (req, res) => {
-			const id = req.params.id
-			const quantity = req.body
-			const filter = { _id: ObjectId(id) }
-			const options = { upsert: true }
-
-			const updateDoc = {
-				$set: {
-					productQuantity: quantity,
-				},
-			}
-
-			const updateStock = await laptopCollection.updateOne(
-				filter,
-				updateDoc,
-				options,
-			)
-
-			res.send(updateStock)
-		}) */
+			const deleteLaptop = await laptopCollection.deleteOne(query)
+			res.send(deleteLaptop)
+		})
 	} catch (error) {
 		console.log({ massage: error })
 	}
