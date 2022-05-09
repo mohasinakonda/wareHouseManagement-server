@@ -37,6 +37,15 @@ async function run() {
 			// console.log(loadData)
 			res.send(loadData)
 		})
+
+		app.get("/myItem", async (req, res) => {
+			const email = req.query.email
+
+			const query = { userEmail: email }
+			const cursor = laptopCollection.find(query)
+			const myItem = await cursor.toArray()
+			res.send(myItem)
+		})
 		app.get("/product/:id", async (req, res) => {
 			const id = req.params.id
 			const query = { _id: ObjectId(id) }
@@ -56,6 +65,7 @@ async function run() {
 			const updateDoc = {
 				$set: {
 					productName: data.productName,
+					userEmail: data.userEmail,
 					productQuantity: data.productQuantity,
 					productImg: data.productImg,
 					productDescription: data.productDescription,
